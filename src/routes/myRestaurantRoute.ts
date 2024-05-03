@@ -1,30 +1,36 @@
-import express from "express"
-import multer from "multer"
-import MyRestaurantController from "../controllers/MyRestaurantController"
-import { jwtCheck, jwtParse } from "../middleware/auth"
-import { validateMyRestaurantRequest } from "../middleware/validation"
+import express from "express";
+import multer from "multer";
+import MyRestaurantController from "../controllers/MyRestaurantController";
+import { jwtCheck, jwtParse } from "../middleware/auth";
+import { validateMyRestaurantRequest } from "../middleware/validation";
 
+const router = express.Router();
 
-const router = express.Router()
-
-const storage = multer.memoryStorage()
+const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 //5MB
-  }
-})
-
-
+    fileSize: 5 * 1024 * 1024, //5MB
+  },
+});
 
 //  /api/my/restaurant
 
 router.get(
-  "/",
+  "/order",
   jwtCheck,
   jwtParse,
-  MyRestaurantController.getMyRestaurant
-)
+  MyRestaurantController.getMyRestaurantOrders,
+);
+
+router.patch(
+  "/order/:orderId/status",
+  jwtCheck,
+  jwtParse,
+  MyRestaurantController.updateOrderStatus,
+);
+
+router.get("/", jwtCheck, jwtParse, MyRestaurantController.getMyRestaurant);
 
 router.post(
   "/",
@@ -32,8 +38,8 @@ router.post(
   validateMyRestaurantRequest,
   jwtCheck,
   jwtParse,
-  MyRestaurantController.createMyRestaurant
-)
+  MyRestaurantController.createMyRestaurant,
+);
 
 router.put(
   "/",
@@ -41,7 +47,7 @@ router.put(
   validateMyRestaurantRequest,
   jwtCheck,
   jwtParse,
-  MyRestaurantController.updateMyRestaurant
-)
+  MyRestaurantController.updateMyRestaurant,
+);
 
-export default router
+export default router;
